@@ -56,6 +56,33 @@ target_link_libraries(clustering_node
 )
 target_include_directories(clustering_node PUBLIC include)
 
+add_executable(debug_pipeline_node
+  src/debug_pipeline_node.cpp
+)
+target_include_directories(debug_pipeline_node PUBLIC include)
+target_link_libraries(debug_pipeline_node
+  ${PCL_LIBRARIES}
+)
+ament_target_dependencies(debug_pipeline_node
+  rclcpp
+  sensor_msgs
+  std_msgs
+  visualization_msgs
+  pcl_conversions
+  PCL
+)
+
+cuda_add_executable(gpu_smoke_node
+  src/gpu_smoke_node.cu
+)
+target_include_directories(gpu_smoke_node PUBLIC include)
+target_link_libraries(gpu_smoke_node
+  ${CUDA_LIBRARIES}
+)
+ament_target_dependencies(gpu_smoke_node
+  rclcpp
+)
+
 add_library(libcudacluster SHARED IMPORTED)
 set_target_properties( libcudacluster PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/lib/libcudacluster.so )
 
@@ -135,6 +162,12 @@ target_include_directories(clustering PUBLIC
 target_compile_features(clustering PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
 install(TARGETS clustering_node
+  DESTINATION lib/${PROJECT_NAME})
+
+install(TARGETS gpu_smoke_node
+  DESTINATION lib/${PROJECT_NAME})
+
+install(TARGETS debug_pipeline_node
   DESTINATION lib/${PROJECT_NAME})
 
 
